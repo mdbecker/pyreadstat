@@ -448,7 +448,7 @@ cdef int handle_value_label(char *val_labels, readstat_value_t value, char *labe
     cdef object cur_dir
     cdef bytes value_label_name
 
-    var_label = <str> val_labels
+    var_label = <bytes> val_labels
     value_label_name = <bytes> label
 
     cdef readstat_type_t value_type
@@ -456,7 +456,7 @@ cdef int handle_value_label(char *val_labels, readstat_value_t value, char *labe
 
     if value_type == READSTAT_TYPE_STRING or value_type == READSTAT_TYPE_STRING_REF:
         c_str_value = readstat_string_value(value)
-        py_str_value = <str> c_str_value
+        py_str_value = <bytes> c_str_value
         pyformat = VAR_FORMAT_STRING
     elif value_type == READSTAT_TYPE_INT8:
         c_int8_value = readstat_int8_value(value)
