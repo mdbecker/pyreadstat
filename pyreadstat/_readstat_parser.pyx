@@ -446,10 +446,10 @@ cdef int handle_value_label(char *val_labels, readstat_value_t value, char *labe
     cdef object labels_raw
     cdef str var_label
     cdef object cur_dir
-    cdef str value_label_name
+    cdef bytes value_label_name
 
     var_label = <str> val_labels
-    value_label_name = <str> label
+    value_label_name = <bytes> label
 
     cdef readstat_type_t value_type
     value_type = readstat_value_type(value)
@@ -546,18 +546,19 @@ cdef void run_readstat_parser(char * filename, data_container data, readstat_err
     value_handler = <readstat_value_handler> handle_value
     value_label_handler = <readstat_value_label_handler> handle_value_label
     note_handler = <readstat_note_handler> handle_note
-    
-    # if the user set the encoding manually
-    if data.user_encoding:
-        encoding_bytes = data.user_encoding.encode("utf-8")
-        readstat_set_file_character_encoding(parser, <char *> encoding_bytes)
-    
+
+
     retcode = readstat_set_metadata_handler(parser, metadata_handler)
     retcode = readstat_set_variable_handler(parser, variable_handler)
     retcode = readstat_set_value_label_handler(parser, value_label_handler)
     retcode = readstat_set_note_handler(parser, note_handler)
     if not metaonly:
         retcode = readstat_set_value_handler(parser, value_handler)
+        
+    # if the user set the encoding manually
+    if data.user_encoding:
+        encoding_bytes = data.user_encoding.encode("utf-8")
+        readstat_set_file_character_encoding(parser, <char *> encoding_bytes)
 
     # parse!
     error = parse_func(parser, filename, ctx);
